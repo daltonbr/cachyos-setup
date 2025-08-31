@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# We export all the helper functions so they are available to the step scripts,
+# which run in their own subshells.
+
 # Minimal logger
 log() { printf '[%s] %s\n' "$(date +'%H:%M:%S')" "$*"; }
+export -f log
 
 # Run a step script from steps/
 run_step() {
@@ -15,19 +19,15 @@ run_step() {
     log "Skipping ${name} (not found or not executable)."
   fi
 }
+export -f run_step
 
 # Convenience: install repo packages idempotently
 pinstall() { sudo pacman -S --needed --noconfirm "$@"; }
+export -f pinstall
 
 # Convenience: install AUR packages idempotently
 yinstall() { "${AUR_HELPER}" -S --needed --noconfirm "$@"; }
-
-# require_cmd() {
-#   command -v "$1" >/dev/null 2>&1 || {
-#     log "Missing required command:'$1'"
-#     exit 1
-#   }
-# }
+export -f yinstall
 
 require_cmd()
 {
@@ -43,11 +43,4 @@ require_cmd()
         exit 1
     fi
 }
-
-# Export all the helper functions so they are available to the step scripts,
-# which run in their own subshells.
-export -f log
-export -f run_step
-export -f pinstall
-export -f yinstall
 export -f require_cmd
