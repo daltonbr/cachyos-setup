@@ -22,10 +22,10 @@ fi
 run_step "00-preflight"
 run_step "05-user-config"
 run_step "10-optimized-repos"
+run_step "20-aur-helper"
+run_step "30-gpu"
 
 // TODO: implement all planned steps
-#run_step "20-aur-helper"
-run_step "30-gpu"
 #run_step "40-dev"
 #run_step "50-gaming"
 #[[ "${INSTALL_FLATPAK}" == "yes" ]] && run_step "60-flatpak" || true
