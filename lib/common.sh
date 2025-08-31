@@ -78,32 +78,58 @@ _format_packages_from_stdin() {
 export -f _format_packages_from_stdin
 
 # Convenience: install repo packages idempotently.
-# Reads a list of packages from stdin via a here document (<<EOF).
+# We install packages one-by-one to prevent a single
+# missing package from halting the entire script.
 pinstall() {
-  # Capture the cleaned package list from our helper function.
   local packages
   packages=$(_format_packages_from_stdin)
 
-  if [[ -n "${packages}" ]]; then
-    log "Installing pacman packages: ${packages}"
-    sudo pacman -S --needed --noconfirm ${packages} | cat
+  if [[ -z "${packages}" ]]; then
+    return 0 # Nothing to do
   fi
+
+  log "Installing pacman packages..."
+  # Loop through each package and try to install it individually.
+  for pkg in ${packages}; do
+    # The '|| true' is a critical part. It ensures that if pacman fails
+    # (e.g., package not found), the non-zero exit code is ignored,
+    # and the 'set -e' command doesn't stop the whole script.
+    # We also capture the output to check for errors.
+    if output=$(sudo pacman -S --needed --noconfirm "${pkg}" 2>&1); then
+      log_success "Installed or verified: ${pkg}"
+    else
+      # Check if the error was "target not found" and show a warning.
+      if echo "${output}" | grep -q "target not found"; then
+        log_warn "Package not found in official repos: ${pkg}"
+      else
+        # For other errors, show a more serious error message.
+        log_error "Failed to install '${pkg}':\n${output}"
+      fi
+    fi
+  done
 }
 export -f pinstall
 
 # Convenience: install AUR packages idempotently.
-# Reads a list of packages from stdin via a here document (<<EOF).
+# Also installs one-by-one for resilience.
 yinstall() {
-  # Capture the cleaned package list from our helper function.
   local packages
   packages=$(_format_packages_from_stdin)
 
-  if [[ -n "${packages}" ]]; then
-    log "Installing AUR packages: ${packages}"
-    # Note: We don't pipe AUR helpers to cat, as their build output is often
-    # complex and benefits from direct terminal rendering.
-    "${AUR_HELPER}" -S --needed --noconfirm ${packages}
+  if [[ -z "${packages}" ]]; then
+    return 0 # Nothing to do
   fi
+
+  log "Installing AUR packages..."
+  for pkg in ${packages}; do
+    # We don't need the '|| true' here because we are capturing the output
+    # and checking the exit code of the 'if' statement directly.
+    if "${AUR_HELPER}" -S --needed --noconfirm "${pkg}"; then
+      log_success "Installed or verified (AUR): ${pkg}"
+    else
+      log_warn "Failed to build or install AUR package: ${pkg}. Please check logs for errors."
+    fi
+  done
 }
 export -f yinstall
 
