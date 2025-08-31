@@ -7,7 +7,24 @@ You can toggle options in `config.env` without touching the scripts. Each step i
 ### Giving execution permission
 
 ```shell
-hmod +x main.sh steps/*.sh lib/common.sh
+chmod +x main.sh steps/*.sh lib/common.sh
+```
+
+### Running
+
+Individual steps
+
+```shell
+./main.sh <individual-step>
+```
+
+```shell
+./main.sh 00-preflight
+```
+
+Or run all steps
+
+```shell
 ./main.sh
 ```
 
