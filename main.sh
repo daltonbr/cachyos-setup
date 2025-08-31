@@ -26,9 +26,10 @@ run_step "20-aur-helper"
 run_step "30-gpu"
 run_step "40-dev"
 run_step "50-gaming"
+run_step "60-flatpak"
+run_step "90-firewall"
 
 // TODO: implement all planned steps
-#[[ "${INSTALL_FLATPAK}" == "yes" ]] && run_step "60-flatpak" || true
 #run_step "70-pacman-core.sh"
 #run_step "80-services"
 
