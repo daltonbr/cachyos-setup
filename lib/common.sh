@@ -62,12 +62,49 @@ run_step() {
 }
 export -f run_step
 
-# Convenience: install repo packages idempotently
-pinstall() { sudo pacman -S --needed --noconfirm "$@"; }
+# --- Package Installation Helpers ---
+
+# Internal helper to process a multiline, commented package list from stdin
+# into a clean, space-separated string on stdout. Not meant to be called directly.
+
+# 1. Remove comments, 2. Convert newlines to spaces, 3. Squeeze multiple spaces
+# 1.  `sed 's/#.*//'`: This is the core of the comment handling. For each line it receives, it removes the `#` character and everything after it.
+# 2.  `tr '\n' ' '`: It translates all newline characters into spaces, turning the multiline list into a single long line.
+# 3.  `tr -s ' '`: It "squeezes" multiple spaces into a single space, cleaning up the list.
+# 4.  `sed 's/^[ \t]*//;s/[ \t]*$//'`: This removes any leading or trailing whitespace from the final string.
+_format_packages_from_stdin() {
+  sed 's/#.*//' | tr '\n' ' ' | tr -s ' ' | sed 's/^[ \t]*//;s/[ \t]*$//'
+}
+export -f _format_packages_from_stdin
+
+# Convenience: install repo packages idempotently.
+# Reads a list of packages from stdin via a here document (<<EOF).
+pinstall() {
+  # Capture the cleaned package list from our helper function.
+  local packages
+  packages=$(_format_packages_from_stdin)
+
+  if [[ -n "${packages}" ]]; then
+    log "Installing pacman packages: ${packages}"
+    sudo pacman -S --needed --noconfirm ${packages} | cat
+  fi
+}
 export -f pinstall
 
-# Convenience: install AUR packages idempotently
-yinstall() { "${AUR_HELPER}" -S --needed --noconfirm "$@"; }
+# Convenience: install AUR packages idempotently.
+# Reads a list of packages from stdin via a here document (<<EOF).
+yinstall() {
+  # Capture the cleaned package list from our helper function.
+  local packages
+  packages=$(_format_packages_from_stdin)
+
+  if [[ -n "${packages}" ]]; then
+    log "Installing AUR packages: ${packages}"
+    # Note: We don't pipe AUR helpers to cat, as their build output is often
+    # complex and benefits from direct terminal rendering.
+    "${AUR_HELPER}" -S --needed --noconfirm ${packages}
+  fi
+}
 export -f yinstall
 
 require_cmd()

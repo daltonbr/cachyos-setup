@@ -15,4 +15,17 @@ log "System update..."
 sudo pacman -Syu --noconfirm
 
 log "Base toolchain..."
-pinstall base-devel git curl wget unzip zip jq
+pinstall <<EOF
+  # Core development tools
+  base-devel
+  git
+  curl
+  wget
+
+  # Archive tools
+  unzip
+  zip
+
+  # Utilities
+  jq
+EOF
