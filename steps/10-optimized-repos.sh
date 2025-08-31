@@ -14,13 +14,6 @@ curl -L -sS "https://mirror.cachyos.org/cachyos-repo.tar.xz" -o "${TMP_DIR}/cach
 log "Extracting setup tool..."
 tar -xf "${TMP_DIR}/cachyos-repo.tar.xz" -C "${TMP_DIR}"
 
-# --- NEW DEBUG BLOCK ---
-# Let's see what is actually inside the temporary directory.
-log "--- DEBUG: Contents of temporary directory [${TMP_DIR}] ---"
-ls -lR "${TMP_DIR}"
-log "--- END DEBUG ---"
-# --- END DEBUG BLOCK ---
-
 # The extracted folder is named 'cachyos-repo'.
 # We run the script inside it with sudo. It will auto-detect the best repo.
 # We pass '--install' to be explicit, although it's the default.
