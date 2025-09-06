@@ -28,6 +28,7 @@ run_step "40-dev"
 run_step "50-gaming"
 run_step "60-flatpak"
 run_step "90-firewall"
+run_step "95-gaming-env"
 
 // TODO: implement all planned steps
 #run_step "70-pacman-core.sh"

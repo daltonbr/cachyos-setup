@@ -43,6 +43,7 @@ bootstrap/
 ## Documentation
 
 - [Flatpak](./docs/flatpak.md)
+- [Gaming](./docs/gaming.md)
 - [ExtraRead](./docs/extra-read.md)
 
 ### A note about CPU archtectures
