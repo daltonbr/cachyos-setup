@@ -13,23 +13,13 @@ if [ ! -d "/usr/local/bin" ]; then
   sudo mkdir -p "/usr/local/bin"
 fi
 
-# Install game-performance script
-if [ -f "${SCRIPT_DIR}/scripts/game-performance" ]; then
-  log "Installing game-performance script to /usr/local/bin..."
-  sudo cp "${SCRIPT_DIR}/scripts/game-performance" "/usr/local/bin/"
+# Download and install game-performance script from CachyOS repository
+log "Downloading game-performance from CachyOS repository..."
+if curl -s "https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/bin/game-performance" | sudo tee "/usr/local/bin/game-performance" > /dev/null; then
   sudo chmod +x "/usr/local/bin/game-performance"
-  log_success "game-performance script installed successfully."
+  log_success "Downloaded and installed game-performance script."
 else
-  log_warn "game-performance script not found in ${SCRIPT_DIR}/scripts/"
-
-  # Try to download directly from CachyOS repository
-  log "Attempting to download game-performance from CachyOS repository..."
-  if curl -s "https://raw.githubusercontent.com/CachyOS/CachyOS-Settings/master/usr/bin/game-performance" | sudo tee "/usr/local/bin/game-performance" > /dev/null; then
-    sudo chmod +x "/usr/local/bin/game-performance"
-    log_success "Downloaded and installed game-performance script."
-  else
-    log_error "Failed to download game-performance script."
-  fi
+  log_error "Failed to download game-performance script."
 fi
 
 # Check if power-profiles-daemon is installed
