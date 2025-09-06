@@ -101,6 +101,11 @@ cat << 'EOF' | sudo tee /tmp/gaming-env > /dev/null
 # Automatically upgrade XESS library
 #PROTON_XESS_UPGRADE=1
 
+# Ray Tracing Settings
+#------------------------------------------------------------------------------
+# Enable ray tracing on AMD GPUs with RADV driver
+#RADV_PERFTEST=rt
+
 # Wine-specific settings
 #------------------------------------------------------------------------------
 # Set WM_CLASS for window manager rules
