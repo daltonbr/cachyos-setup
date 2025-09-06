@@ -16,20 +16,18 @@ fi
 
 
 # --- Phase 2: Optional Flatpak Installations ---
-log "Installing selected Flatpak applications..."
-# THE FIX: Use '<<-' to allow the closing 'EOF' to be indented.
-# This makes the script much more readable.
-flatpak install -y --noninteractive <<-EOF
-	# --- Gaming Launchers & Tools ---
-	com.heroicgameslauncher.hgl
-	com.usebottles.bottles
-	net.davidotek.pupgui2
+log "Installing recommended Flatpak applications..."
 
-	# --- Emulators ---
-	org.DolphinEmu.dolphin-emu
-	# net.rpcs3.RPCS3
-	EOF
-
+# We now use a single command broken across multiple lines with backslashes (\).
+# This is a more direct and robust method that avoids here-document issues.
+# To prevent an application from being installed, simply delete its entire line
+# (including the backslash).
+flatpak install -y --noninteractive \
+  com.heroicgameslauncher.hgl \
+  com.usebottles.bottles \
+  net.davidotek.pupgui2 \
+  org.DolphinEmu.dolphin-emu \
+  net.rpcs3.RPCS3
 
 log_success "Flatpak step finished."
 log_warn "A system reboot may be required for Flatpak applications to appear in your app launcher."
