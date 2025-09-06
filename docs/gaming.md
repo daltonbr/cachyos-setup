@@ -10,6 +10,8 @@ The `cachyos-setup` script installs the following gaming components:
 - `proton-cachyos` - CachyOS optimized Proton with additional patches
 - `proton-cachyos-slr` - CachyOS Proton with Steam Linux Runtime (for Anti-Cheat games)
 - `wine-cachyos-opt` - CachyOS optimized Wine (installed to /opt/wine-cachyos for coexistence with system wine)
+- `game-performance` - Official CachyOS script to temporarily enable performance power profile
+- `power-profiles-daemon` - Required for game-performance to function
 - Other utilities and performance tools
 
 ## Proton Versions
@@ -26,13 +28,18 @@ CachyOS provides several Proton versions:
 
 ### Power Profile Switching
 
-The `game-performance` wrapper script temporarily switches your system to the performance power profile while gaming:
+The `game-performance` script is the official CachyOS utility that temporarily switches your system to the performance power profile while gaming. It also prevents your system from entering screensaver mode during gameplay.
 
+To use it with Steam games, add this to the game's launch options:
 ```
 game-performance %command%
 ```
 
-Add this to your game's launch options in Steam, Lutris, or Heroic Games Launcher.
+For other launchers:
+- **Lutris**: Add `game-performance` in the "Command prefix" field
+- **Heroic Games Launcher**: Add `game-performance` in the "Command Line Arguments" field
+
+This script requires `power-profiles-daemon` which is installed automatically by our setup.
 
 ### Shader Cache Size
 
@@ -102,6 +109,11 @@ If Steam's overlay causes stuttering, add this launch option:
 LD_PRELOAD="" %command%
 ```
 Note: This disables the Steam overlay.
+
+You can combine this with game-performance:
+```
+game-performance LD_PRELOAD="" %command%
+```
 
 ### Steam Shader Pre-caching
 
